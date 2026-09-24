@@ -256,18 +256,25 @@ Buka `http://<server-ip>:8000/` di browser.
 
 ### Setup Cron
 
-Tambahkan di crontab server:
+Tambahkan di crontab server untuk auto-sync setiap 1 jam:
 
 ```bash
-* * * * * cd /home/linux/staging-aws/bpr-sync && php artisan schedule:run >> /dev/null 2>&1
+0 * * * * cd /home/linux/staging-aws/bpr-sync && php artisan master-pks:sync >> /home/linux/staging-aws/bpr-sync/storage/logs/sync.log 2>&1
 ```
 
 ### Schedule
 
-| Task | Frequency |
-|------|-----------|
-| Full sync | Every 30 minutes |
-| Retry failed | Every hour |
+| Task | Frequency | Command |
+|------|-----------|---------|
+| Full sync | Every 1 hour | `php artisan master-pks:sync` |
+| First-time bulk sync | Manual | `php artisan master-pks:sync --first-time` |
+| Retry failed | Manual | `php artisan master-pks:sync --retry` |
+
+### View Sync Logs
+
+```bash
+tail -f /home/linux/staging-aws/bpr-sync/storage/logs/sync.log
+```
 
 ---
 
