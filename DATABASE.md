@@ -15,25 +15,27 @@ Table utama yang menyimpan data Master PKS dari BPR.
 | 1 | `id` | bigint unsigned | NO | auto_increment | Primary key staging |
 | 2 | `bpr_id` | bigint unsigned | YES | NULL | ID dari BPR (unix timestamp) |
 | 3 | `no_pks` | varchar(50) | NO | — | Nomor PKS |
-| 3 | `nama_client` | varchar(255) | YES | NULL | Nama client berdasarkan PKS |
-| 4 | `group_bisnis` | varchar(255) | YES | NULL | Group bisnis client |
-| 5 | `start_date_pks` | date | YES | NULL | Tanggal mulai PKS |
-| 6 | `end_date_pks` | date | YES | NULL | Tanggal berakhir PKS |
-| 7 | `nama_lob` | varchar(100) | YES | NULL | Nama Line of Business |
-| 8 | `kode_lob` | varchar(20) | YES | NULL | Kode Line of Business |
-| 9 | `jenis_kontrak` | varchar(50) | YES | NULL | Tipe PKS: New / Addendum / Perpanjangan |
-| 10 | `create_at` | timestamp | YES | NULL | Waktu data dibuat di BPR |
-| 11 | `update_at_bpr` | timestamp | YES | NULL | Update terakhir dari BPR |
-| 12 | `retry_at` | timestamp | YES | NULL | Waktu data disinkronisasi (retry) |
-| 13 | `sync_at` | timestamp | YES | NULL | Waktu terakhir data diperbarui dari BPR |
-| 14 | `sync_status` | varchar(20) | NO | `pending` | Status: `pending` / `success` / `failed` |
-| 15 | `is_fetched` | tinyint(1) | NO | 0 | Apakah data sudah pernah diambil dari BPR |
-| 16 | `fetched_at` | timestamp | YES | NULL | Waktu pertama kali data diambil |
-| 17 | `is_synced` | tinyint(1) | NO | 0 | Apakah data sudah pernah di-sync ke AWS |
-| 18 | `synced_to_aws_at` | timestamp | YES | NULL | Waktu terakhir data di-sync ke AWS |
-| 19 | `fetch_count` | int | NO | 0 | Jumlah kali data diambil |
-| 20 | `created_at` | timestamp | YES | NULL | Laravel timestamp |
-| 21 | `updated_at` | timestamp | YES | NULL | Laravel timestamp |
+| 4 | `nama_client` | varchar(255) | YES | NULL | Nama client berdasarkan PKS |
+| 5 | `code_client` | varchar(30) | YES | NULL | Kode client dari BPR |
+| 6 | `group_bisnis` | varchar(255) | YES | NULL | Group bisnis client |
+| 7 | `start_date_pks` | date | YES | NULL | Tanggal mulai PKS |
+| 8 | `end_date_pks` | date | YES | NULL | Tanggal berakhir PKS |
+| 9 | `nama_lob` | varchar(100) | YES | NULL | Nama Line of Business |
+| 10 | `kode_lob` | varchar(20) | YES | NULL | Kode Line of Business |
+| 11 | `jenis_kontrak` | varchar(50) | YES | NULL | Tipe PKS: New / Addendum / Perpanjangan |
+| 12 | `title` | varchar(150) | YES | NULL | Title dari BPR |
+| 13 | `create_at` | timestamp | YES | NULL | Waktu data dibuat di BPR |
+| 14 | `update_at_bpr` | timestamp | YES | NULL | Update terakhir dari BPR |
+| 15 | `retry_at` | timestamp | YES | NULL | Waktu data disinkronisasi (retry) |
+| 16 | `sync_at` | timestamp | YES | NULL | Waktu terakhir data diperbarui dari BPR |
+| 17 | `sync_status` | varchar(20) | NO | `pending` | Status: `pending` / `success` / `failed` |
+| 18 | `is_fetched` | tinyint(1) | NO | 0 | Apakah data sudah pernah diambil dari BPR |
+| 19 | `fetched_at` | timestamp | YES | NULL | Waktu pertama kali data diambil |
+| 20 | `is_synced` | tinyint(1) | NO | 0 | Apakah data sudah pernah di-sync ke AWS |
+| 21 | `synced_to_aws_at` | timestamp | YES | NULL | Waktu terakhir data di-sync ke AWS |
+| 22 | `fetch_count` | int | NO | 0 | Jumlah kali data diambil |
+| 23 | `created_at` | timestamp | YES | NULL | Laravel timestamp |
+| 24 | `updated_at` | timestamp | YES | NULL | Laravel timestamp |
 
 **Indexes:**
 
@@ -191,17 +193,19 @@ View di database BPR sebagai sumber data Master PKS.
 
 | # | Field (DB) | Field (Alias) | Type | Description |
 |---|------------|---------------|------|-------------|
-| 0 | `id` | `id` | bigint | ID dari BPR (unix timestamp) |
-| 1 | `No pks` | `no_pks` | varchar(100) | Nomor PKS |
-| 2 | `Nama client` | `nama_client` | varchar(150) | Nama client |
-| 3 | `Group bisnis` | `group_bisnis` | varchar(125) | Group bisnis |
-| 4 | `start date PKS` | `start_date_pks` | date | Tanggal mulai PKS |
-| 5 | `end date PKS` | `end_date_pks` | date | Tanggal berakhir PKS |
-| 6 | `Nama LOB` | `nama_lob` | varchar(125) | Nama Line of Business |
-| 7 | `Kode LOB` | `kode_lob` | varchar(25) | Kode Line of Business |
-| 8 | `Jenis Kontrak` | `jenis_kontrak` | varchar(12) | Tipe PKS |
-| 9 | `Create at` | `create_at` | datetime | Waktu dibuat |
-| 10 | `Update at` | `update_at` | datetime | Waktu update |
+| 1 | `id` | `id` | bigint | ID dari BPR (unix timestamp) |
+| 2 | `No pks` | `no_pks` | varchar(100) | Nomor PKS |
+| 3 | `Nama client` | `nama_client` | varchar(150) | Nama client |
+| 4 | `Code client` | `code_client` | varchar(30) | Kode client |
+| 5 | `Group bisnis` | `group_bisnis` | varchar(125) | Group bisnis |
+| 6 | `start date PKS` | `start_date_pks` | date | Tanggal mulai PKS |
+| 7 | `end date PKS` | `end_date_pks` | date | Tanggal berakhir PKS |
+| 8 | `Nama LOB` | `nama_lob` | varchar(125) | Nama Line of Business |
+| 9 | `Kode LOB` | `kode_lob` | varchar(25) | Kode Line of Business |
+| 10 | `Jenis Kontrak` | `jenis_kontrak` | varchar(12) | Tipe PKS |
+| 11 | `title` | `title` | varchar(150) | Title |
+| 12 | `Create at` | `create_at` | datetime | Waktu dibuat |
+| 13 | `Update at` | `update_at` | datetime | Waktu update |
 
 > ⚠️ **Catatan:** View BPR menggunakan **spasi di nama kolom** (e.g., `No pks`). Sudah di-handle di model `BprPksView` dengan alias `DB::raw()`.
 
@@ -216,12 +220,14 @@ View di database BPR sebagai sumber data Master PKS.
 | `id` | `bpr_id` | — |
 | `No pks` | `no_pks` | — |
 | `Nama client` | `nama_client` | — |
+| `Code client` | `code_client` | — |
 | `Group bisnis` | `group_bisnis` | — |
 | `start date PKS` | `start_date_pks` | — |
 | `end date PKS` | `end_date_pks` | — |
 | `Nama LOB` | `nama_lob` | — |
 | `Kode LOB` | `kode_lob` | — |
 | `Jenis Kontrak` | `jenis_kontrak` | — |
+| `title` | `title` | — |
 | `Create at` | `create_at` | `0000-00-00 00:00:00` → `NULL` |
 | `Update at` | `update_at_bpr` | `0000-00-00 00:00:00` → `NULL` |
 | — | `sync_status` | Default: `pending` → `success` |

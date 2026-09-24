@@ -14,12 +14,14 @@ class SyncMasterPksService
         'id'             => 'bpr_id',
         'no_pks'         => 'no_pks',
         'nama_client'    => 'nama_client',
+        'code_client'    => 'code_client',
         'group_bisnis'   => 'group_bisnis',
         'start_date_pks' => 'start_date_pks',
         'end_date_pks'   => 'end_date_pks',
         'nama_lob'       => 'nama_lob',
         'kode_lob'       => 'kode_lob',
         'jenis_kontrak'  => 'jenis_kontrak',
+        'title'          => 'title',
         'create_at'      => 'create_at',
         'update_at'      => 'update_at_bpr',
     ];
@@ -32,7 +34,7 @@ class SyncMasterPksService
         'total'    => 0,
     ];
 
-    protected int $chunkSize = 500;
+    protected int $chunkSize = 1000;
 
     /**
      * Sanitize datetime - convert invalid dates to null
@@ -73,7 +75,7 @@ class SyncMasterPksService
         $startTime = now();
         $this->stats = ['created' => 0, 'updated' => 0, 'skipped' => 0, 'failed' => 0, 'total' => 0];
 
-        Log::info('[SyncMasterPks] Starting incremental sync...');
+        Log::info('[SyncMasterPks] Starting incremental sync...', ['batchSize' => $this->chunkSize]);
 
         try {
             $totalFromBpr = BprPksView::count();
@@ -84,7 +86,7 @@ class SyncMasterPksService
                 return $this->stats;
             }
 
-            Log::info("[SyncMasterPks] Found {$totalFromBpr} records. Starting chunked sync...");
+            Log::info("[SyncMasterPks] Found {$totalFromBpr} records. Starting chunked sync with batch size {$this->chunkSize}...");
 
             BprPksView::query()->chunk($this->chunkSize, function ($chunk) {
                 foreach ($chunk as $bprRecord) {
@@ -113,7 +115,7 @@ class SyncMasterPksService
         $startTime = now();
         $this->stats = ['created' => 0, 'updated' => 0, 'skipped' => 0, 'failed' => 0, 'total' => 0];
 
-        Log::info('[SyncMasterPks] Starting FIRST-TIME bulk sync...');
+        Log::info('[SyncMasterPks] Starting FIRST-TIME bulk sync...', ['batchSize' => $this->chunkSize]);
 
         try {
             $existingCount = MasterPks::count();
@@ -130,11 +132,11 @@ class SyncMasterPksService
                 return $this->stats;
             }
 
-            Log::info("[SyncMasterPks] First-time sync: {$totalFromBpr} records. Using raw bulk insert...");
+            Log::info("[SyncMasterPks] First-time sync: {$totalFromBpr} records. Using raw bulk insert with batch size {$this->chunkSize}...");
 
             $columns = [
-                'bpr_id', 'no_pks', 'nama_client', 'group_bisnis', 'start_date_pks', 'end_date_pks',
-                'nama_lob', 'kode_lob', 'jenis_kontrak', 'create_at', 'update_at_bpr',
+                'bpr_id', 'no_pks', 'nama_client', 'code_client', 'group_bisnis', 'start_date_pks', 'end_date_pks',
+                'nama_lob', 'kode_lob', 'jenis_kontrak', 'title', 'create_at', 'update_at_bpr',
                 'sync_status', 'is_fetched', 'is_synced', 'fetch_count', 'sync_at', 'created_at', 'updated_at',
             ];
 
@@ -147,12 +149,14 @@ class SyncMasterPksService
                         $bprRecord->bpr_id,
                         $bprRecord->no_pks ?? '',
                         $bprRecord->nama_client ?? '',
+                        $bprRecord->code_client ?? '',
                         $bprRecord->group_bisnis ?? '',
                         $this->sanitizeDate($bprRecord->start_date_pks),
                         $this->sanitizeDate($bprRecord->end_date_pks),
                         $bprRecord->nama_lob ?? '',
                         $bprRecord->kode_lob ?? '',
                         $bprRecord->jenis_kontrak ?? '',
+                        $bprRecord->title ?? '',
                         $this->sanitizeDatetime($bprRecord->create_at),
                         $this->sanitizeDatetime($bprRecord->update_at),
                         'success',
